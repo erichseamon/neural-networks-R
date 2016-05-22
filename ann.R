@@ -6,19 +6,22 @@ k <- 10
 library(MASS)
 data <- Boston
 
+apply(data,2,function(x) sum(is.na(x)))
+
 maxs <- apply(data, 2, max) 
 mins <- apply(data, 2, min)
 
 scaled <- as.data.frame(scale(data, center = mins, scale = maxs - mins))
 
+library(neuralnet)
 library(plyr) 
 pbar <- create_progress_bar('text')
 pbar$init(k)
 
-n <- names(train.cv)
 f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
 
 for(i in 1:k){
+  
   index <- sample(1:nrow(data),round(0.9*nrow(data)))
   train.cv <- scaled[index,]
   test.cv <- scaled[-index,]
@@ -40,8 +43,7 @@ for(i in 1:k){
   pbar$step()
 }
 
-
---------
+#--------Plotting
   
 par(mfrow=c(1,1))
 
